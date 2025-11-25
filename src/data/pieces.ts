@@ -24,8 +24,10 @@ export const ALL_PIECES: Piece[] = [
   createPiece('4x1', '4×1 Vertical', ['#', '#', '#', '#']),
   createPiece('5x1', '5×1 Vertical', ['#', '#', '#', '#', '#']),
 
-  // Squares
+  // Squares and rectangles
   createPiece('2x2', '2×2 Square', ['##', '##']),
+  createPiece('2x3', '2×3 Rectangle', ['###', '###']),
+  createPiece('3x2', '3×2 Rectangle', ['##', '##', '##']),
   createPiece('3x3', '3×3 Square', ['###', '###', '###']),
 
   // Small L shapes (2x2 with one missing)
@@ -81,12 +83,6 @@ export const ALL_PIECES: Piece[] = [
   createPiece('stair-1', 'Stairs Right', ['#..', '##.', '.##']),
   createPiece('stair-2', 'Stairs Left', ['..#', '.##', '##.']),
 
-  // U shape
-  createPiece('U-1', 'U Shape (↓)', ['#.#', '###']),
-  createPiece('U-2', 'U Shape (↑)', ['###', '#.#']),
-  createPiece('U-3', 'U Shape (→)', ['##', '.#', '##']),
-  createPiece('U-4', 'U Shape (←)', ['##', '#.', '##']),
-
   // Diagonal pieces (2 blocks)
   createPiece('diag-2-dr', 'Diagonal 2 ↘', ['#.', '.#']),
   createPiece('diag-2-dl', 'Diagonal 2 ↙', ['.#', '#.']),
@@ -103,11 +99,11 @@ export const ALL_PIECES: Piece[] = [
 // Group pieces by category for easier selection
 export const PIECE_CATEGORIES = {
   'Lines': ALL_PIECES.filter(p => p.id.includes('x1') || p.id.includes('1x')),
-  'Squares': ALL_PIECES.filter(p => p.id.includes('x2') && !p.id.includes('1x') || p.id === '3x3'),
+  'Squares': ALL_PIECES.filter(p => ['2x2', '2x3', '3x2', '3x3'].includes(p.id)),
   'L Shapes': ALL_PIECES.filter(p => p.id.startsWith('L-')),
   'T Shapes': ALL_PIECES.filter(p => p.id.startsWith('T-')),
   'S/Z Shapes': ALL_PIECES.filter(p => p.id.startsWith('S-') || p.id.startsWith('Z-')),
   'Corners': ALL_PIECES.filter(p => p.id.includes('corner')),
   'Diagonals': ALL_PIECES.filter(p => p.id.startsWith('diag-')),
-  'Other': ALL_PIECES.filter(p => p.id === 'plus' || p.id.startsWith('stair') || p.id.startsWith('U-')),
+  'Other': ALL_PIECES.filter(p => p.id === 'plus' || p.id.startsWith('stair')),
 };

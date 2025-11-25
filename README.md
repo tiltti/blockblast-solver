@@ -73,7 +73,8 @@ src/
 - **S/Z Shapes** - Standard and vertical
 - **Corners** - 2x2 with one cell, extended corners
 - **Diagonals** - 2, 3, and 4 block stair-step patterns (both directions)
-- **Other** - Plus sign, stairs, U shapes
+- **Other** - Plus sign, stairs
+- **Custom** - Create your own piece with a 4x4 grid editor
 
 ## Tech Stack
 

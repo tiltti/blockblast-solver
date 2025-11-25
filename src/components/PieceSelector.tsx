@@ -25,9 +25,121 @@ function PiecePreview({ piece, size = 'normal' }: { piece: Piece; size?: 'normal
   );
 }
 
+// Custom piece creator component
+function CustomPieceCreator({ onCreatePiece }: { onCreatePiece: (piece: Piece) => void }) {
+  const [grid, setGrid] = useState<boolean[][]>(() =>
+    Array(4).fill(null).map(() => Array(4).fill(false))
+  );
+
+  const toggleCell = (row: number, col: number) => {
+    setGrid(prev => {
+      const newGrid = prev.map(r => [...r]);
+      newGrid[row][col] = !newGrid[row][col];
+      return newGrid;
+    });
+  };
+
+  const handleCreate = () => {
+    // Trim the grid to remove empty rows/cols
+    const trimmed = trimShape(grid);
+    if (!trimmed) return;
+
+    const piece: Piece = {
+      id: `custom-${Date.now()}`,
+      name: 'Custom',
+      shape: trimmed,
+    };
+    onCreatePiece(piece);
+  };
+
+  const handleClear = () => {
+    setGrid(Array(4).fill(null).map(() => Array(4).fill(false)));
+  };
+
+  const hasAnyCells = grid.some(row => row.some(cell => cell));
+
+  return (
+    <div className="border border-dashed border-gray-300 rounded-lg p-3 bg-gray-50">
+      <div className="text-xs text-gray-600 mb-2 font-medium">Create custom piece:</div>
+      <div className="flex items-start gap-3">
+        <div className="inline-grid grid-cols-4 gap-1">
+          {grid.map((row, rowIndex) =>
+            row.map((cell, colIndex) => (
+              <button
+                key={`${rowIndex}-${colIndex}`}
+                onClick={() => toggleCell(rowIndex, colIndex)}
+                className={`
+                  w-6 h-6 rounded-sm border transition-colors
+                  ${cell
+                    ? 'bg-[#66a033] border-[#5a9030]'
+                    : 'bg-white border-gray-300 hover:border-blue-400'
+                  }
+                `}
+              />
+            ))
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <button
+            onClick={handleCreate}
+            disabled={!hasAnyCells}
+            className={`
+              px-3 py-1 text-xs rounded font-medium transition-colors
+              ${hasAnyCells
+                ? 'bg-green-500 text-white hover:bg-green-600'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }
+            `}
+          >
+            Use
+          </button>
+          <button
+            onClick={handleClear}
+            className="px-3 py-1 text-xs rounded bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Trim empty rows and columns from shape
+function trimShape(grid: boolean[][]): boolean[][] | null {
+  // Find bounds
+  let minRow = -1, maxRow = -1, minCol = -1, maxCol = -1;
+
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[r].length; c++) {
+      if (grid[r][c]) {
+        if (minRow === -1) minRow = r;
+        maxRow = r;
+        if (minCol === -1 || c < minCol) minCol = c;
+        if (maxCol === -1 || c > maxCol) maxCol = c;
+      }
+    }
+  }
+
+  if (minRow === -1) return null; // Empty grid
+
+  // Extract trimmed shape
+  const trimmed: boolean[][] = [];
+  for (let r = minRow; r <= maxRow; r++) {
+    const row: boolean[] = [];
+    for (let c = minCol; c <= maxCol; c++) {
+      row.push(grid[r][c]);
+    }
+    trimmed.push(row);
+  }
+
+  return trimmed;
+}
+
 export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorProps) {
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>('Lines');
+  const [activeCategory, setActiveCategory] = useState<string>('Lines');
+  const [customPiece, setCustomPiece] = useState<Piece | null>(null);
 
   const handleSlotClick = (index: number) => {
     if (activeSlot === index) {
@@ -59,6 +171,24 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
     e.stopPropagation();
     onPieceSelect(index, null);
   };
+
+  const handleCustomPieceCreate = (piece: Piece) => {
+    setCustomPiece(piece);
+    handlePieceClick(piece);
+  };
+
+  // Get pieces for current category
+  const getPiecesForCategory = (): Piece[] => {
+    if (activeCategory === 'All') {
+      return ALL_PIECES;
+    }
+    if (activeCategory === 'Custom') {
+      return customPiece ? [customPiece] : [];
+    }
+    return PIECE_CATEGORIES[activeCategory as keyof typeof PIECE_CATEGORIES] || [];
+  };
+
+  const categories = ['All', ...Object.keys(PIECE_CATEGORIES), 'Custom'];
 
   return (
     <div className="space-y-4">
@@ -108,14 +238,18 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
 
           {/* Category tabs */}
           <div className="flex flex-wrap gap-1 mb-3">
-            {Object.keys(PIECE_CATEGORIES).map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
-                onClick={() => setExpandedCategory(category)}
+                onClick={() => setActiveCategory(category)}
                 className={`
                   px-2 py-1 text-xs rounded transition-colors
-                  ${expandedCategory === category
-                    ? 'bg-blue-500 text-white'
+                  ${activeCategory === category
+                    ? category === 'All'
+                      ? 'bg-purple-500 text-white'
+                      : category === 'Custom'
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-blue-500 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }
                 `}
@@ -125,10 +259,15 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
             ))}
           </div>
 
-          {/* Pieces in selected category */}
-          {expandedCategory && (
-            <div className="flex flex-wrap gap-2">
-              {PIECE_CATEGORIES[expandedCategory as keyof typeof PIECE_CATEGORIES].map((piece) => (
+          {/* Custom piece creator */}
+          {activeCategory === 'Custom' && (
+            <CustomPieceCreator onCreatePiece={handleCustomPieceCreate} />
+          )}
+
+          {/* Pieces grid */}
+          {activeCategory !== 'Custom' && (
+            <div className={`flex flex-wrap gap-2 ${activeCategory === 'All' ? 'max-h-64 overflow-y-auto' : ''}`}>
+              {getPiecesForCategory().map((piece) => (
                 <button
                   key={piece.id}
                   onClick={() => handlePieceClick(piece)}
@@ -138,6 +277,20 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
                   <PiecePreview piece={piece} size="small" />
                 </button>
               ))}
+            </div>
+          )}
+
+          {/* Show custom piece if exists and in Custom tab */}
+          {activeCategory === 'Custom' && customPiece && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="text-xs text-gray-600 mb-2">Your custom piece:</div>
+              <button
+                onClick={() => handlePieceClick(customPiece)}
+                className="p-2 rounded border border-orange-300 bg-orange-50 hover:border-orange-400 hover:bg-orange-100 transition-colors"
+                title="Custom piece"
+              >
+                <PiecePreview piece={customPiece} size="small" />
+              </button>
             </div>
           )}
         </div>
