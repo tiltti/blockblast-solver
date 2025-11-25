@@ -82,9 +82,9 @@ function CustomPieceCreator({ onCreatePiece }: { onCreatePiece: (piece: Piece) =
   const hasAnyCells = grid.some(row => row.some(cell => cell));
 
   return (
-    <div className="border border-dashed border-gray-300 rounded-lg p-3 bg-gray-50">
+    <div className="border border-dashed border-gray-300 rounded-lg p-2 sm:p-3 bg-gray-50">
       <div className="text-xs text-gray-600 mb-2 font-medium">Create custom piece:</div>
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2 sm:gap-3">
         <div className="inline-grid grid-cols-4 gap-1">
           {grid.map((row, rowIndex) =>
             row.map((cell, colIndex) => (
@@ -92,7 +92,7 @@ function CustomPieceCreator({ onCreatePiece }: { onCreatePiece: (piece: Piece) =
                 key={`${rowIndex}-${colIndex}`}
                 onClick={() => toggleCell(rowIndex, colIndex)}
                 className={`
-                  w-6 h-6 rounded-sm border transition-colors
+                  w-5 h-5 sm:w-6 sm:h-6 rounded-sm border transition-colors
                   ${cell
                     ? 'bg-[#66a033] border-[#5a9030]'
                     : 'bg-white border-gray-300 hover:border-blue-400'
@@ -214,17 +214,17 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
   const categories = ['All', ...Object.keys(PIECE_CATEGORIES), 'Custom'];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {/* Selected Pieces Slots */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">Selected Pieces (3)</h3>
-        <div className="flex gap-3">
+        <h3 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Selected Pieces (3)</h3>
+        <div className="flex gap-2 sm:gap-3 justify-center">
           {[0, 1, 2].map((index) => (
             <div
               key={index}
               onClick={() => handleSlotClick(index)}
               className={`
-                relative w-24 h-24 rounded-lg border-2 flex items-center justify-center
+                relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg border-2 flex items-center justify-center
                 cursor-pointer transition-all
                 ${activeSlot === index
                   ? 'border-blue-500 bg-blue-50'
@@ -236,7 +236,7 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
             >
               {selectedPieces[index] ? (
                 <>
-                  <PiecePreview piece={selectedPieces[index]!} maxSize={72} />
+                  <PiecePreview piece={selectedPieces[index]!} maxSize={60} />
                   <button
                     onClick={(e) => handleClearSlot(index, e)}
                     className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600"
@@ -245,7 +245,7 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
                   </button>
                 </>
               ) : (
-                <span className="text-gray-400 text-sm">Piece {index + 1}</span>
+                <span className="text-gray-400 text-xs sm:text-sm">Piece {index + 1}</span>
               )}
             </div>
           ))}
@@ -254,8 +254,8 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
 
       {/* Piece Library */}
       {activeSlot !== null && (
-        <div className="border rounded-lg p-3 bg-white">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+        <div className="border rounded-lg p-2 sm:p-3 bg-white">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">
             Select piece for slot {activeSlot + 1}
           </h3>
 
@@ -289,7 +289,7 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
 
           {/* Pieces grid */}
           {activeCategory !== 'Custom' && (
-            <div className={`flex flex-wrap gap-2 ${activeCategory === 'All' ? 'max-h-64 overflow-y-auto' : ''}`}>
+            <div className={`flex flex-wrap gap-1 sm:gap-2 ${activeCategory === 'All' ? 'max-h-48 sm:max-h-64 overflow-y-auto' : ''}`}>
               {getPiecesForCategory().map((piece) => (
                 <button
                   key={piece.id}

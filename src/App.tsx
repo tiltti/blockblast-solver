@@ -104,45 +104,45 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#c4b8a5] py-6 px-4">
+    <div className="min-h-screen bg-[#c4b8a5] py-4 sm:py-6 px-2 sm:px-4">
       <div className="max-w-6xl mx-auto">
-        <header className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Block Blast Solver</h1>
-          <p className="text-gray-600">
-            Click on the grid to set up your current game state, select the 3 pieces, and solve!
+        <header className="text-center mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2">Block Blast Solver</h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            Set up board, select pieces, solve!
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           {/* Left Column: Board Setup */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-700">Game Board</h2>
-                <div className="flex gap-2">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-xl p-3 sm:p-6 shadow-lg">
+              <div className="flex justify-between items-center mb-3 sm:mb-4">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-700">Game Board</h2>
+                <div className="flex gap-1 sm:gap-2">
                   <button
                     onClick={handleClearBoard}
-                    className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded transition-colors"
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-gray-200 hover:bg-gray-300 rounded transition-colors"
                   >
-                    Clear Board
+                    Clear
                   </button>
                   <button
                     onClick={handleReset}
-                    className="px-3 py-1 text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
                   >
-                    Reset All
+                    Reset
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mb-4">
-                Click or drag to paint cells. Match your current game.
+              <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
+                Click or drag to paint cells.
               </p>
               <div className="flex justify-center">
                 <Grid grid={board} onCellClick={handleCellClick} onCellPaint={handleCellPaint} interactive />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-lg">
+            <div className="bg-white rounded-xl p-3 sm:p-6 shadow-lg">
               <PieceSelector
                 selectedPieces={selectedPieces}
                 onPieceSelect={handlePieceSelect}
@@ -153,7 +153,7 @@ function App() {
               onClick={handleSolve}
               disabled={isLoading}
               className={`
-                w-full py-4 rounded-xl text-xl font-bold transition-all
+                w-full py-3 sm:py-4 rounded-xl text-lg sm:text-xl font-bold transition-all
                 ${isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl'
@@ -165,8 +165,8 @@ function App() {
           </div>
 
           {/* Right Column: Solution */}
-          <div className="bg-white rounded-xl p-6 shadow-lg">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Solution</h2>
+          <div className="bg-white rounded-xl p-3 sm:p-6 shadow-lg">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4">Solution</h2>
             <SolutionDisplay solution={solution} isLoading={isLoading} error={error} onSolved={handleSolved} />
           </div>
         </div>
