@@ -30,6 +30,17 @@ function App() {
     setError(undefined);
   }, []);
 
+  const handleCellPaint = useCallback((row: number, col: number, value: boolean) => {
+    setBoard(prev => {
+      const newBoard = copyGrid(prev);
+      newBoard[row][col] = value;
+      return newBoard;
+    });
+    // Clear solution when board changes
+    setSolution(null);
+    setError(undefined);
+  }, []);
+
   const handlePieceSelect = useCallback((index: number, piece: Piece | null) => {
     setSelectedPieces(prev => {
       const newPieces = [...prev];
@@ -124,10 +135,10 @@ function App() {
                 </div>
               </div>
               <p className="text-sm text-gray-500 mb-4">
-                Click cells to toggle filled/empty state. Match your current game.
+                Click or drag to paint cells. Match your current game.
               </p>
               <div className="flex justify-center">
-                <Grid grid={board} onCellClick={handleCellClick} interactive />
+                <Grid grid={board} onCellClick={handleCellClick} onCellPaint={handleCellPaint} interactive />
               </div>
             </div>
 
