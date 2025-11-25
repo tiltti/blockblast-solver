@@ -2,6 +2,8 @@
 
 A web-based solver for the Block Blast puzzle game. Input your current game state and available pieces, and the solver finds the optimal placement order and positions.
 
+**Live Demo:** https://tiltti.github.io/blockblast-solver/
+
 ## Game Rules (Block Blast)
 
 - **8x8 grid** - The game board consists of 64 cells
@@ -81,6 +83,30 @@ src/
 - Vite + React + TypeScript
 - Tailwind CSS v4
 - LocalStorage for state persistence (no backend needed)
+
+## Deployment
+
+The app is automatically deployed to GitHub Pages on every push to `main`.
+
+- **Live URL:** https://tiltti.github.io/blockblast-solver/
+- **Auto-deploy:** Push to `main` triggers build and deploy via GitHub Actions
+- **Manual trigger:** Actions tab → "Deploy to GitHub Pages" → "Run workflow"
+
+### Local Development
+
+```bash
+git clone https://github.com/tiltti/blockblast-solver.git
+cd blockblast-solver
+npm install
+npm run dev
+```
+
+### Production Build
+
+```bash
+npm run build    # Output in dist/
+npm run preview  # Preview production build locally
+```
 
 ## Future Improvements
 
