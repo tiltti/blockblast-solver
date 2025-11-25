@@ -7,17 +7,40 @@ interface PieceSelectorProps {
   onPieceSelect: (index: number, piece: Piece | null) => void;
 }
 
-function PiecePreview({ piece, size = 'normal' }: { piece: Piece; size?: 'normal' | 'small' }) {
-  const cellSize = size === 'normal' ? 'w-5 h-5' : 'w-3 h-3';
-  const gap = size === 'normal' ? 'gap-0.5' : 'gap-px';
+function PiecePreview({ piece, size = 'normal', maxSize }: { piece: Piece; size?: 'normal' | 'small'; maxSize?: number }) {
+  const rows = piece.shape.length;
+  const cols = piece.shape[0].length;
+
+  // Calculate cell size to fit within maxSize container
+  let cellSizePx: number;
+  let gapPx: number;
+
+  if (maxSize) {
+    // Calculate cell size to fit piece within maxSize x maxSize container
+    const maxDimension = Math.max(rows, cols);
+    gapPx = 2;
+    const totalGap = (maxDimension - 1) * gapPx;
+    cellSizePx = Math.floor((maxSize - totalGap) / maxDimension);
+    cellSizePx = Math.min(cellSizePx, 20); // Cap at 20px
+  } else {
+    cellSizePx = size === 'normal' ? 20 : 12;
+    gapPx = size === 'normal' ? 2 : 1;
+  }
 
   return (
-    <div className={`inline-grid ${gap}`} style={{ gridTemplateColumns: `repeat(${piece.shape[0].length}, 1fr)` }}>
+    <div
+      className="inline-grid"
+      style={{
+        gridTemplateColumns: `repeat(${cols}, ${cellSizePx}px)`,
+        gap: `${gapPx}px`
+      }}
+    >
       {piece.shape.map((row, rowIndex) =>
         row.map((cell, colIndex) => (
           <div
             key={`${rowIndex}-${colIndex}`}
-            className={`${cellSize} rounded-sm ${cell ? 'bg-[#66a033] border border-[#5a9030]' : 'bg-transparent'}`}
+            className={`rounded-sm ${cell ? 'bg-[#66a033] border border-[#5a9030]' : 'bg-transparent'}`}
+            style={{ width: cellSizePx, height: cellSizePx }}
           />
         ))
       )}
@@ -213,7 +236,7 @@ export function PieceSelector({ selectedPieces, onPieceSelect }: PieceSelectorPr
             >
               {selectedPieces[index] ? (
                 <>
-                  <PiecePreview piece={selectedPieces[index]!} />
+                  <PiecePreview piece={selectedPieces[index]!} maxSize={72} />
                   <button
                     onClick={(e) => handleClearSlot(index, e)}
                     className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600"
