@@ -1,5 +1,4 @@
 import type { Grid as GridType, Placement } from '../types/index';
-import { GRID_SIZE } from '../utils/grid';
 
 interface GridProps {
   grid: GridType;

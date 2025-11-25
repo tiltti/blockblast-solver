@@ -1,7 +1,6 @@
 import type { Grid, Piece, Solution, SolutionStep, Position } from '../types/index';
 import {
   copyGrid,
-  canPlacePiece,
   placePiece,
   clearLines,
   getValidPositions,
@@ -28,63 +27,6 @@ function permutations<T>(arr: T[]): T[][] {
 interface PlacementCandidate {
   position: Position;
   score: number;
-}
-
-// Find the best position for a piece on a grid
-function findBestPosition(grid: Grid, piece: Piece): Position | null {
-  const positions = getValidPositions(grid, piece);
-  if (positions.length === 0) return null;
-
-  let bestPosition: Position | null = null;
-  let bestScore = -Infinity;
-
-  for (const pos of positions) {
-    // Place piece and check result
-    const afterPlace = placePiece(grid, piece, pos);
-    const { grid: afterClear, cleared } = clearLines(afterPlace);
-
-    // Calculate score
-    let score = evaluateBoard(afterClear);
-    score += cleared * 100; // Big bonus for clearing lines
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestPosition = pos;
-    }
-  }
-
-  return bestPosition;
-}
-
-// Try to solve with a specific order of pieces
-function trySolveWithOrder(grid: Grid, pieces: Piece[]): Solution | null {
-  const steps: SolutionStep[] = [];
-  let currentGrid = copyGrid(grid);
-  let totalLinesCleared = 0;
-
-  for (const piece of pieces) {
-    const position = findBestPosition(currentGrid, piece);
-    if (!position) {
-      return null; // Can't place this piece
-    }
-
-    const boardBefore = copyGrid(currentGrid);
-    const afterPlace = placePiece(currentGrid, piece, position);
-    const { grid: afterClear, cleared } = clearLines(afterPlace);
-
-    steps.push({
-      placement: { piece, position },
-      boardBefore,
-      boardWithPiece: copyGrid(afterPlace),
-      boardAfter: afterClear,
-      linesCleared: cleared,
-    });
-
-    currentGrid = afterClear;
-    totalLinesCleared += cleared;
-  }
-
-  return { steps, totalLinesCleared };
 }
 
 // Advanced solver that tries multiple positions for each piece
